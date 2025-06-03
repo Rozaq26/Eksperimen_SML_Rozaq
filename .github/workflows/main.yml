@@ -36,7 +36,7 @@ jobs:
 
     - name: Commit and push processed data
       run: |
-        git add preprocessing/data_preprocessing/*
+        git add preprocessing/dataset_preprocessing/*
         git commit -m "Preprocessed data update" || echo "No changes to commit"
         git push origin HEAD
       env:
