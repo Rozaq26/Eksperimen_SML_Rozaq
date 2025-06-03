@@ -1,0 +1,43 @@
+name: Preprocess Dataset
+
+on:
+  push:
+    paths:
+      - '**.py'
+      - '**/data.csv'
+      
+permissions:
+  contents: write  # Berikan izin menulis
+  
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install pandas scikit-learn
+
+    - name: Run preprocessing script
+      run: python automate_Rozaq.py
+
+    - name: Set up Git credentials
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+
+    - name: Commit and push processed data
+      run: |
+        git add preprocessing/data_preprocessing/*
+        git commit -m "Preprocessed data update" || echo "No changes to commit"
+        git push origin HEAD
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
